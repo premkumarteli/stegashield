@@ -1,0 +1,25 @@
+# StegaShield Backend Requirements
+# Core Cryptography & Steganography
+cryptography>=46.0.0
+numpy>=2.0.0
+scipy>=1.15.0
+pillow>=11.0.0
+
+# Web Framework & Validation (M3)
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.10.0
+pydantic-settings>=2.7.0
+python-multipart>=0.0.18
+slowapi>=0.1.9
+
+# Persistence & Database (M3)
+SQLAlchemy>=2.0.36
+PyMySQL>=1.1.1
+alembic>=1.14.0
+
+# Testing & Quality
+pytest>=8.0.0
+pytest-cov>=5.0.0
+pytest-asyncio>=0.24.0
+httpx>=0.28.0
