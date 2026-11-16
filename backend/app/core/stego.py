@@ -25,6 +25,7 @@ from app.core.crypto import (
 from app.core.metrics import calculate_metrics
 
 # --- Constants ---
+PROTOCOL_VERSION: Final[int] = 1
 MAX_IMAGE_PIXELS: Final[int] = 16_000_000  # 16 Megapixels (e.g. 4000x4000)
 MAX_FILE_SIZE_BYTES: Final[int] = 10 * 1024 * 1024  # 10 MB
 SALT_SLOTS: Final[int] = SALT_SIZE_BYTES * 8  # 128 channel slots
@@ -198,8 +199,8 @@ def embed(
     stego_image = Image.fromarray(arr.reshape(height, width, 3), mode="RGB")
 
     # 6. Metrics Calculation
-    metrics = calculate_metrics(cover_rgb, stego_image)
-    metrics.update(
+    metrics_result: dict[str, Any] = dict(calculate_metrics(cover_rgb, stego_image))
+    metrics_result.update(
         {
             "capacity_total_bits": total_slots,
             "payload_bits": required_bits,
@@ -208,7 +209,7 @@ def embed(
         }
     )
 
-    return stego_image, metrics
+    return stego_image, metrics_result
 
 
 def extract(stego_image: Image.Image, password: str) -> tuple[bytes, bool, str]:

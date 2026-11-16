@@ -11,7 +11,7 @@ from typing import Any, Final
 
 import numpy as np
 from PIL import Image
-from scipy.ndimage import gaussian_filter
+from scipy.ndimage import gaussian_filter  # type: ignore[import-untyped]
 
 # Wang et al. (2004) Structural Similarity constants
 SSIM_K1: Final[float] = 0.01

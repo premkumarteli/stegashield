@@ -1,0 +1,10 @@
+{
+  "chi_square": {
+    "suspicious_threshold": 0.05,
+    "likely_stego_threshold": 0.5
+  },
+  "rs_analysis": {
+    "suspicious_threshold": 0.2,
+    "likely_stego_threshold": 0.35
+  }
+}
