@@ -1,0 +1,1002 @@
+{
+  "timestamp": "2026-11-15T19:18:25Z",
+  "mode": "direct_core",
+  "python_version": "3.13.7",
+  "summary": {
+    "total": 140,
+    "passed": 140,
+    "failed": 0,
+    "skipped": 0,
+    "duration_seconds": 100.03
+  },
+  "tiers": {
+    "tier1": {
+      "total": 140,
+      "passed": 140,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_attack_lab.py::test_t1_f13_01_payload_ratio_sweep",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.167,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_attack_lab.py::test_t1_f13_02_multi_method_matrix",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0304,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_attack_lab.py::test_t1_f13_03_experiment_summary_structure",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0106,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_attack_lab.py::test_t1_f13_04_false_positive_rate_on_clean_images",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0132,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_attack_lab.py::test_t1_f13_05_experiment_completion_state",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0099,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_attack_lab.py::test_t1_f14_01_csv_export_content",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0271,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_attack_lab.py::test_t1_f14_02_csv_header_columns",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0081,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_attack_lab.py::test_t1_f14_03_csv_data_row_count",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0437,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_attack_lab.py::test_t1_f14_04_csv_numerical_fidelity",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0093,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_attack_lab.py::test_t1_f14_05_honest_reporting_no_fabrication",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.017,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f15_01_core_layer_independence",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0075,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f15_02_openapi_route_contracts",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0008,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f15_03_swagger_docs_endpoint_registration",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0008,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f15_04_pydantic_schema_validation",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0015,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f15_05_global_exception_sanitization",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 1.1313,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f17_01_session_cookie_format",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0004,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f17_02_session_history_tracking",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 1.1252,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f17_03_session_scoping_isolation",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 1.4441,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f17_04_corrupted_cookie_regeneration",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0003,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f17_05_clear_session_history",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 1.0456,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f18_01_thread_pool_offloading",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0154,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f18_02_single_experiment_mutex_lock",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0004,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f18_03_mutex_release_on_completion",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0003,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f18_04_mutex_release_on_failure",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0005,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f18_05_concurrent_worker_capacity",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0036,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f19_01_upload_limit_10mb_rejection",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0181,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f19_02_image_16mp_decompression_guard",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.3816,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f19_03_pillow_decompression_bomb_configuration",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0009,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f19_04_zero_secrets_in_operation_history",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 1.4436,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_backend_api.py::test_t1_f19_05_zero_secrets_in_error_responses",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 1.2666,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_client_docs.py::test_t1_f27_01_openapi_schema_structure",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0011,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_client_docs.py::test_t1_f27_02_typescript_client_target_path",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0006,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_client_docs.py::test_t1_f27_03_openapi_embed_response_schema",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0005,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_client_docs.py::test_t1_f27_04_openapi_uniform_error_response_schema",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0006,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_client_docs.py::test_t1_f27_05_openapi_detect_response_schema",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0037,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_client_docs.py::test_t1_f28_01_readme_setup_instructions",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0019,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_client_docs.py::test_t1_f28_02_architecture_document_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0006,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_client_docs.py::test_t1_f28_03_threat_model_document_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0005,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_client_docs.py::test_t1_f28_04_decisions_adr_document_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0015,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_client_docs.py::test_t1_f28_05_viva_notes_document_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0005,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_crypto.py::test_t1_f01_01_scrypt_standard_ascii_password",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 1.2857,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_crypto.py::test_t1_f01_02_scrypt_unicode_emoji_password",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 2.0643,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_crypto.py::test_t1_f01_03_scrypt_salt_orthogonality",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 2.0586,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_crypto.py::test_t1_f01_04_scrypt_minimal_single_char_password",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 1.0991,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_crypto.py::test_t1_f01_05_scrypt_deterministic_repeatability",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 4.4663,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_crypto.py::test_t1_f02_01_hkdf_orthogonal_subkeys",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0003,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_crypto.py::test_t1_f02_02_hkdf_bitwise_independence",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0003,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_crypto.py::test_t1_f02_03_hkdf_domain_info_separation",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0003,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_crypto.py::test_t1_f02_04_hkdf_deterministic_subkeys",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0003,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_crypto.py::test_t1_f02_05_hkdf_zero_salt_expansion",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0008,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_crypto.py::test_t1_f03_01_aes_gcm_text_roundtrip",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0003,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_crypto.py::test_t1_f03_02_aes_gcm_file_packaging_roundtrip",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0004,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_crypto.py::test_t1_f03_03_aes_gcm_aad_length_integrity",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0004,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_crypto.py::test_t1_f03_04_aes_gcm_nonce_uniqueness",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0011,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_crypto.py::test_t1_f03_05_aes_gcm_unicode_multilingual_roundtrip",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0003,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_database.py::test_t1_f16_01_required_table_schema_inventory",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0006,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_database.py::test_t1_f16_02_operations_table_column_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0006,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_database.py::test_t1_f16_03_foreign_key_relationship_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.001,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_database.py::test_t1_f16_04_connection_pool_recycling_configuration",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0006,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_database.py::test_t1_f16_05_zero_secret_database_columns",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0005,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_detectors.py::test_t1_f10_01_chi_square_clean_image_low_p_value",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0636,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_detectors.py::test_t1_f10_02_chi_square_lsb_r_high_ratio_detection",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0181,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_detectors.py::test_t1_f10_03_chi_square_sequential_vs_permuted_lsb_r",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 1.0161,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_detectors.py::test_t1_f10_04_chi_square_deterministic_scores",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0447,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_detectors.py::test_t1_f10_05_chi_square_response_schema",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0075,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_detectors.py::test_t1_f11_01_rs_analysis_clean_natural_hypothesis",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0512,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_detectors.py::test_t1_f11_02_rs_analysis_lsb_r_50_percent_ratio",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0548,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_detectors.py::test_t1_f11_03_rs_analysis_lsb_r_100_percent_inversion",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0548,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_detectors.py::test_t1_f11_04_rs_analysis_flipping_functions",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0004,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_detectors.py::test_t1_f11_05_rs_analysis_quadratic_solver_robustness",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.01,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_detectors.py::test_t1_f12_01_calibration_percentile_derivation",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0192,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_detectors.py::test_t1_f12_02_thresholds_file_schema_validation",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0135,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_detectors.py::test_t1_f12_03_monotonic_threshold_ordering",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0174,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_detectors.py::test_t1_f12_04_fallback_to_defaults",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0003,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_detectors.py::test_t1_f12_05_threshold_calibration_classification_logic",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0007,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_metrics.py::test_t1_f09_01_mse_and_psnr_computation",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 1.1092,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_metrics.py::test_t1_f09_02_ssim_structural_similarity",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 1.0651,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_metrics.py::test_t1_f09_03_amplified_difference_heatmap",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 1.2292,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_metrics.py::test_t1_f09_04_lsb_bitplane_visualizer",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0015,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_metrics.py::test_t1_f09_05_pairs_of_values_histogram",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0026,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f04_01_salt_sequential_allocation",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 1.0712,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f04_02_permutation_prefix_consistency",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0016,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f04_03_no_collision_with_salt_prefix",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0041,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f04_04_uniform_slot_dispersion",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0018,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f04_05_prng_seed_independence",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0008,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f05_01_lsb_r_even_odd_transitions",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0005,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f05_02_lsb_r_numpy2_bitwise_safety",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0004,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f05_03_lsb_r_full_image_roundtrip",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 1.9577,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f05_04_lsb_r_psnr_range_verification",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.9246,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f05_05_lsb_r_lossless_bit_retrieval",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 3.6769,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f06_01_lsb_m_plus_minus_equal_probability",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0064,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f06_02_lsb_m_lower_boundary_clamping",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0045,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f06_03_lsb_m_upper_boundary_clamping",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0009,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f06_04_lsb_m_bit_preservation",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0663,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f06_05_lsb_m_roundtrip_lossless",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 10.4416,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f07_01_extract_happy_path",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 8.9009,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f07_02_extract_wrong_password_uniform_error",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 8.2428,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f07_03_extract_corrupted_stego_uniform_error",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 5.7888,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f07_04_extract_clean_cover_uniform_error",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 7.2622,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f07_05_extract_truncated_image_uniform_error",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 7.7831,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f08_01_capacity_calculation_formula",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0044,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f08_02_png_cover_validation",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 3.1839,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f08_03_jpeg_cover_validation_and_png_output",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 6.851,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f08_04_bmp_cover_validation_and_png_output",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 4.1642,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_stego_embed_extract.py::test_t1_f08_05_exact_capacity_limit_rejection",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0023,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f20_01_app_shell_route_inventory",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0022,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f20_02_dark_theme_default_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0114,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f20_03_theme_toggle_persistence_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0115,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f20_04_wcag_contrast_ratio_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0026,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f20_05_responsive_viewport_breakpoints",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.001,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f21_01_landing_hero_and_primer_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0028,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f21_02_interactive_8bit_pixel_widget_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0011,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f21_03_bit_flipping_rgb_delta_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.008,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f21_04_color_distance_delta_e_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0018,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f21_05_pixel_widget_reset_action_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0009,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f22_01_step1_cover_upload_capacity_meter",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0092,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f22_02_step2_payload_input_mode_toggle",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.001,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f22_03_step3_password_strength_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0016,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f22_04_step4_method_selection_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.001,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f22_05_before_after_split_slider_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0008,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f23_01_stego_image_dropzone_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0052,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f23_02_text_extraction_display_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0005,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f23_03_file_extraction_download_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0008,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f23_04_uniform_error_alert_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0009,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f23_05_form_clear_reset_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0006,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f24_01_dual_tab_navigation_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0006,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f24_02_compare_tab_visual_artifacts_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0007,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f24_03_detect_tab_single_image_input_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0014,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f24_04_radial_detector_gauges_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0038,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f24_05_classification_summary_card_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0023,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f25_01_experiment_config_panel_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0035,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f25_02_live_progress_stream_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0032,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f25_03_recharts_detection_curves_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0103,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f25_04_experiment_summary_table_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0093,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f25_05_csv_export_download_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0013,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f26_01_session_history_table_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0026,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f26_02_rolling_ttl_countdown_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0014,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f26_03_download_stego_image_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0045,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f26_04_about_academic_primer_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0072,
+      "error_message": null
+    },
+    {
+      "nodeid": "tier1_feature_coverage/test_t1_ui_contracts.py::test_t1_f26_05_about_threat_model_summary_contract",
+      "tier": "tier1",
+      "status": "passed",
+      "duration": 0.0007,
+      "error_message": null
+    }
+  ]
+}
