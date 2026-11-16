@@ -73,8 +73,8 @@ def run_experiment(
                 raise ValueError(f"Unsupported cover_image tuple value type: {type(img_or_bytes)}")
             normalized_covers.append((str(name), img))
         elif isinstance(item, Image.Image):
-            name = getattr(item, "filename", None)
-            img_name = Path(name).name if name else f"cover_{idx + 1}.png"
+            name_val = getattr(item, "filename", None)
+            img_name = Path(name_val).name if isinstance(name_val, (str, Path)) else f"cover_{idx + 1}.png"
             img = item.convert("RGB") if item.mode != "RGB" else item
             normalized_covers.append((img_name, img))
         else:

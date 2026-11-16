@@ -104,20 +104,20 @@ def main(argv: list[str] | None = None) -> int:
     if args.corpus_dir and os.path.isdir(args.corpus_dir):
         valid_exts = {".png", ".jpg", ".jpeg", ".bmp"}
         corpus_path = Path(args.corpus_dir)
-        for f in corpus_path.iterdir():
-            if f.suffix.lower() in valid_exts:
+        for img_file in corpus_path.iterdir():
+            if img_file.suffix.lower() in valid_exts:
                 try:
-                    img = Image.open(f).convert("RGB")
+                    img = Image.open(img_file).convert("RGB")
                     images.append(img)
                 except Exception as e:
-                    print(f"Skipping {f.name}: {e}", file=sys.stderr)
+                    print(f"Skipping {img_file.name}: {e}", file=sys.stderr)
 
     thresholds = calibrate_thresholds(images)
 
     out_path = Path(args.output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(thresholds, f, indent=2)
+    with open(out_path, "w", encoding="utf-8") as out_file:
+        json.dump(thresholds, out_file, indent=2)
 
     print(f"Calibrated thresholds saved to {out_path}:")
     print(json.dumps(thresholds, indent=2))

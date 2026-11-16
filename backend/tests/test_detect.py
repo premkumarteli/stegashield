@@ -24,19 +24,18 @@ from app.core.stego import METHOD_LSB_MATCHING, METHOD_LSB_REPLACEMENT, embed
 def gradient_image() -> Image.Image:
     """Generates a synthetic textured RGB image with natural non-equalized pixel pairs."""
     width, height = 120, 120
-    x = np.linspace(20, 220, width, dtype=np.uint8)
-    y = np.linspace(30, 210, height, dtype=np.uint8)
-    xx, yy = np.meshgrid(x, y)
-    r = xx
-    g = yy
-    b = ((xx.astype(np.int32) + yy.astype(np.int32)) // 2).astype(np.uint8)
+    y, x = np.mgrid[0:height, 0:width]
+    r = ((x * 2 + y) % 200 + 20).astype(np.uint8)
+    g = ((x + y * 2) % 200 + 20).astype(np.uint8)
+    b = ((x * 2 + y * 2) % 200 + 20).astype(np.uint8)
     arr = np.stack([r, g, b], axis=-1)
     return Image.fromarray(arr, mode="RGB")
 
 
 @pytest.fixture
-def full_stego_replacement(gradient_image: Image.Image) -> Image.Image:
+def full_stego_replacement(gradient_image: Image.Image, monkeypatch: pytest.MonkeyPatch) -> Image.Image:
     """Creates a high-payload (96%) LSB-replacement stego image to trigger chi-square detection."""
+    monkeypatch.setattr("os.urandom", lambda n: b"0123456789abcdef"[:n])
     # Capacity = 120*120*3 = 43200 bits = 5400 bytes. Overhead = 50 bytes.
     payload_data = b"X" * 5200
     stego_img, _ = embed(
@@ -49,8 +48,9 @@ def full_stego_replacement(gradient_image: Image.Image) -> Image.Image:
 
 
 @pytest.fixture
-def full_stego_matching(gradient_image: Image.Image) -> Image.Image:
+def full_stego_matching(gradient_image: Image.Image, monkeypatch: pytest.MonkeyPatch) -> Image.Image:
     """Creates a high-payload (96%) LSB-matching stego image to test detector evasion."""
+    monkeypatch.setattr("os.urandom", lambda n: b"0123456789abcdef"[:n])
     payload_data = b"X" * 5200
     stego_img, _ = embed(
         gradient_image,

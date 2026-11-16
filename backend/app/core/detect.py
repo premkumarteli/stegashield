@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any, Final, Optional
 
 import numpy as np
-import scipy.stats
+import scipy.stats  # type: ignore[import-untyped]
 from PIL import Image
 
 VERDICT_CLEAN: Final[str] = "clean"
