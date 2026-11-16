@@ -26,7 +26,7 @@ def gradient_image() -> Image.Image:
     width, height = 120, 120
     y, x = np.mgrid[0:height, 0:width]
     r = ((x * 2 + y) % 200 + 20).astype(np.uint8)
-    g = ((x + y * 2) % 200 + 20).astype(np.uint8)
+    g = ((x * 3 + y) % 200 + 20).astype(np.uint8)
     b = ((x * 2 + y * 2) % 200 + 20).astype(np.uint8)
     arr = np.stack([r, g, b], axis=-1)
     return Image.fromarray(arr, mode="RGB")
@@ -152,6 +152,45 @@ def test_rs_analysis_full_replacement(full_stego_replacement: Image.Image) -> No
     assert 0.0 <= result["score"] <= 1.0
     # On high LSB replacement, RS detects significant embedding
     assert result["score"] > 0.40
+
+
+def test_rs_analysis_100_percent_replacement_sinusoid() -> None:
+    """Verifies that 100% LSB replacement produces estimated_payload_ratio > 0.85
+
+    across a multi-frequency sinusoidal texture without channels collapsing to 0.0.
+    """
+    y, x = np.mgrid[0:256, 0:256]
+    r = (128 + 50 * np.sin(x / 15.0) * np.cos(y / 20.0)).astype(np.uint8)
+    g = (128 + 40 * np.cos(x / 25.0) * np.sin(y / 18.0)).astype(np.uint8)
+    b = (128 + 45 * np.sin((x + y) / 30.0)).astype(np.uint8)
+    img = Image.fromarray(np.stack([r, g, b], axis=-1), mode="RGB")
+    arr = np.asarray(img)
+    rng = np.random.default_rng(2026)
+    stego_arr = (arr & 0xFE) | rng.integers(0, 2, arr.shape, dtype=np.uint8)
+    stego_img = Image.fromarray(stego_arr, mode="RGB")
+    res = rs_analysis(stego_img)
+
+    assert res["estimated_payload_ratio"] > 0.85
+    assert res["classification"] == VERDICT_LIKELY_STEGO
+    for ch, ratio in res["channel_ratios"].items():
+        assert ratio > 0.80, f"Channel {ch} ratio {ratio} falsely collapsed"
+
+
+def test_rs_analysis_100_percent_replacement_gradient(gradient_image: Image.Image) -> None:
+    """Verifies that 100% LSB replacement on gradient texture produces ratio > 0.85
+
+    and individual channel ratios do not falsely report clean.
+    """
+    arr = np.asarray(gradient_image)
+    rng = np.random.default_rng(42)
+    stego_arr = (arr & 0xFE) | rng.integers(0, 2, arr.shape, dtype=np.uint8)
+    stego_img = Image.fromarray(stego_arr, mode="RGB")
+    res = rs_analysis(stego_img)
+
+    assert res["estimated_payload_ratio"] > 0.85
+    assert res["classification"] == VERDICT_LIKELY_STEGO
+    for ch, ratio in res["channel_ratios"].items():
+        assert ratio > 0.80, f"Channel {ch} ratio {ratio} falsely collapsed"
 
 
 def test_rs_analysis_channels(gradient_image: Image.Image) -> None:
@@ -319,3 +358,98 @@ def test_classify_loads_default_config_file() -> None:
     # Passing thresholds=None triggers reading config/thresholds.json
     verdict = classify(c, r, thresholds=None)
     assert verdict == VERDICT_CLEAN
+
+
+def test_classify_config_file_fallback_branches(tmp_path: pytest.TempPathFactory, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Verifies classify() falls back to DEFAULT_THRESHOLDS when config file is missing or corrupt."""
+    from pathlib import Path
+    from app.core.detect import DEFAULT_THRESHOLDS, classify
+
+    # Nonexistent path fallback
+    monkeypatch.setattr("pathlib.Path.is_file", lambda self: False)
+    verdict = classify({"p_value": 0.01}, {"estimated_payload_ratio": 0.01}, thresholds=None)
+    assert verdict == VERDICT_CLEAN
+
+    # Point to corrupt file
+    corrupt_file = Path(str(tmp_path)) / "corrupt_thresholds.json"
+    corrupt_file.write_text("NOT_VALID_JSON", encoding="utf-8")
+    monkeypatch.setattr("pathlib.Path.is_file", lambda self: True)
+    monkeypatch.setattr("builtins.open", lambda *args, **kwargs: (_ for _ in ()).throw(ValueError("Corrupt JSON")))
+    verdict_corrupt = classify({"p_value": 0.01}, {"estimated_payload_ratio": 0.01}, thresholds=None)
+    assert verdict_corrupt == VERDICT_CLEAN
+    assert "chi_square" in DEFAULT_THRESHOLDS
+
+
+def test_rs_channel_vectorized_edge_branches(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Explicitly tests fallback branches in _rs_channel_vectorized:
+
+    - Degenerate linear regime (|a| < 1e-4) with |b| <= 1e-8
+    - Negative discriminant (disc < 0) with |b| <= 1e-8
+    - Root selection (abs(x1) > abs(x2))
+    - Singularity guard (|x - 0.5| < 1e-6)
+    - NaN/Inf score protection
+    """
+    from app.core.detect import _rs_channel_vectorized
+
+    # Short array < 64 pixels (< 16 groups)
+    p_short, _, _, _, _ = _rs_channel_vectorized(np.zeros(20, dtype=np.uint8))
+    assert p_short == 0.0
+
+    # Flat array (0 variation)
+    p_flat, _, _, _, _ = _rs_channel_vectorized(np.full(100, 100, dtype=np.uint8))
+    assert p_flat == 0.0
+
+    # Natural texture
+    y, x = np.mgrid[0:128, 0:128]
+    tex = (128 + 50 * np.sin(x / 15.0) * np.cos(y / 20.0)).astype(np.uint8).flatten()
+    p_clean, _, _, _, _ = _rs_channel_vectorized(tex)
+    assert 0.0 <= p_clean <= 0.10
+
+    # 100% LSB randomized texture
+    rng = np.random.default_rng(999)
+    tex_stego = (tex & 0xFE) | rng.integers(0, 2, tex.shape, dtype=np.uint8)
+    p_stego, _, _, _, _ = _rs_channel_vectorized(tex_stego)
+    assert p_stego > 0.85
+
+    dummy = np.zeros(64, dtype=np.uint8)
+
+    # 1. disc < 0 and b == 0 (exercises line 231: x = 0.0)
+    with monkeypatch.context() as m:
+        mean_gen1 = iter([0.5, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 2.0])
+        m.setattr("numpy.mean", lambda arr: next(mean_gen1))
+        p_disc_neg, _, _, _, _ = _rs_channel_vectorized(dummy)
+        assert p_disc_neg == 0.0
+
+    # 2. Pick root x2 where abs(x1) > abs(x2) (exercises line 240: x = x2)
+    with monkeypatch.context() as m:
+        mean_gen2 = iter([0.5, 0.0, 2.5, 0.0, 0.0, 0.0, 4.0, 0.0])
+        m.setattr("numpy.mean", lambda arr: next(mean_gen2))
+        p_x2, _, _, _, _ = _rs_channel_vectorized(dummy)
+        assert 0.0 <= p_x2 <= 1.0
+
+    # 3. Singularity guard |x - 0.5| < 1e-6 (exercises line 244: p = 0.0)
+    with monkeypatch.context() as m:
+        mean_gen3 = iter([0.0, 0.0, 0.0, 0.25, 0.5, 0.0, 0.25, 0.0])
+        m.setattr("numpy.mean", lambda arr: next(mean_gen3))
+        p_sing, _, _, _, _ = _rs_channel_vectorized(dummy)
+        assert p_sing == 0.0
+
+    # 4. NaN / Inf guard (exercises line 249: p = 0.0)
+    with monkeypatch.context() as m:
+        m.setattr("app.core.detect.math.isnan", lambda val: True)
+        p_nan, _, _, _, _ = _rs_channel_vectorized(dummy)
+        assert p_nan == 0.0
+
+
+def test_chi_square_nan_guard(gradient_image: Image.Image, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Verifies Chi-Square NaN/Inf guard resets p_value to 0.0."""
+    monkeypatch.setattr("app.core.detect.math.isnan", lambda val: True)
+    res = chi_square_attack(gradient_image)
+    assert res["score"] == 0.0
+
+
+def test_chi_square_suspicious_verdict(gradient_image: Image.Image, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Verifies Chi-Square classifies as suspicious when 0.05 <= p_value < 0.50."""
+    monkeypatch.setattr("scipy.stats.chi2.sf", lambda stat, df: 0.20)
+    res = chi_square_attack(gradient_image)
+    assert res["classification"] == VERDICT_SUSPICIOUS

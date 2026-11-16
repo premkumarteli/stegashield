@@ -217,23 +217,33 @@ def _rs_channel_vectorized(flat: np.ndarray) -> tuple[float, float, float, float
     b = d_nm0 - d_nm1 - d1 - 3.0 * d0
     c = d0 - d_nm0
 
-    if abs(a) < 1e-8:
-        x = -c / b if abs(b) > 1e-8 else 0.0
-    else:
-        disc = b**2 - 4.0 * a * c
-        if disc >= 0.0:
-            sqrt_disc = math.sqrt(disc)
-            roots = [(-b + sqrt_disc) / (2.0 * a), (-b - sqrt_disc) / (2.0 * a)]
-            roots.sort(key=lambda r: abs(r))
-            x = roots[0]
+    if abs(a) < 1e-4:
+        if abs(b) > 1e-8:
+            x = -c / b
         else:
-            x = -b / (2.0 * a)
+            x = 0.0
+    else:
+        disc = b * b - 4.0 * a * c
+        if disc < 0:
+            if abs(b) > 1e-8:
+                x = -c / b
+            else:
+                x = 0.0
+        else:
+            sqrt_disc = math.sqrt(disc)
+            x1 = (-b + sqrt_disc) / (2.0 * a)
+            x2 = (-b - sqrt_disc) / (2.0 * a)
+            # pick root with smaller absolute value or closest to physical range
+            if abs(x1) <= abs(x2):
+                x = x1
+            else:
+                x = x2
 
-    # Conversion to payload ratio p = x / (x - 0.5)
+    # Conversion to payload ratio p = |x / (x - 0.5)|
     if abs(x - 0.5) < 1e-6:
         p = 0.0
     else:
-        p = x / (x - 0.5)
+        p = abs(x / (x - 0.5))
 
     if math.isnan(p) or math.isinf(p):
         p = 0.0
