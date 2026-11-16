@@ -190,3 +190,102 @@ def test_detect_stego_endpoint(client: TestClient, cover_image_bytes: bytes) -> 
     assert "chi_square" in data
     assert "rs_analysis" in data
     assert data["classification"] in ("clean", "suspicious", "likely_stego")
+
+
+def test_truncated_image_uploads_return_400(client: TestClient) -> None:
+    """Ensure truncated image byte streams trigger clean HTTP 400 (never 500) across endpoints."""
+    # Generate a valid PNG byte stream and truncate it midway
+    img = Image.new("RGB", (64, 64), color="blue")
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    truncated_bytes = buf.getvalue()[: len(buf.getvalue()) // 2]
+
+    # 1. /api/v1/stego/embed
+    res_embed = client.post(
+        "/api/v1/stego/embed",
+        data={
+            "password": "Password123!",
+            "payload_type": "text",
+            "payload_text": "Secret",
+            "method": "lsb_replacement",
+        },
+        files={"cover_file": ("truncated.png", truncated_bytes, "image/png")},
+    )
+    assert res_embed.status_code == 400
+    assert "Invalid cover image" in res_embed.json()["detail"]
+
+    # 2. /api/v1/stego/extract
+    res_extract = client.post(
+        "/api/v1/stego/extract",
+        data={"password": "Password123!"},
+        files={"stego_file": ("truncated.png", truncated_bytes, "image/png")},
+    )
+    assert res_extract.status_code == 400
+    assert res_extract.json()["detail"] == "WRONG_PASSWORD_OR_NO_DATA"
+
+    # 3. /api/v1/stego/analyze (cover truncated)
+    res_analyze_cov = client.post(
+        "/api/v1/stego/analyze",
+        files={
+            "cover_file": ("truncated.png", truncated_bytes, "image/png"),
+            "stego_file": ("valid.png", buf.getvalue(), "image/png"),
+        },
+    )
+    assert res_analyze_cov.status_code == 400
+    assert "Invalid cover image" in res_analyze_cov.json()["detail"]
+
+    # /api/v1/stego/analyze (stego truncated)
+    res_analyze_stego = client.post(
+        "/api/v1/stego/analyze",
+        files={
+            "cover_file": ("valid.png", buf.getvalue(), "image/png"),
+            "stego_file": ("truncated.png", truncated_bytes, "image/png"),
+        },
+    )
+    assert res_analyze_stego.status_code == 400
+    assert "Invalid stego image" in res_analyze_stego.json()["detail"]
+
+    # 4. /api/v1/stego/detect
+    res_detect = client.post(
+        "/api/v1/stego/detect",
+        files={"image_file": ("truncated.png", truncated_bytes, "image/png")},
+    )
+    assert res_detect.status_code == 400
+    assert "Invalid candidate image" in res_detect.json()["detail"]
+
+
+def test_analyze_identical_images_psnr_sanitized(client: TestClient, cover_image_bytes: bytes) -> None:
+    """Comparing identical images (MSE = 0.0) yields PSNR 100.0 without JSON inf serialization crash."""
+    analyze_res = client.post(
+        "/api/v1/stego/analyze",
+        files={
+            "cover_file": ("cover1.png", cover_image_bytes, "image/png"),
+            "stego_file": ("cover2.png", cover_image_bytes, "image/png"),
+        },
+    )
+    assert analyze_res.status_code == 200
+    data = analyze_res.json()
+    assert data["mse"] == 0.0
+    assert data["psnr"] == 100.0
+    assert data["ssim"] == 1.0
+
+
+def test_extract_empty_password_returns_400(client: TestClient, cover_image_bytes: bytes) -> None:
+    """Empty string or omitted password on extract returns uniform HTTP 400 WRONG_PASSWORD_OR_NO_DATA."""
+    # 1. Empty string password parameter
+    res_empty = client.post(
+        "/api/v1/stego/extract",
+        data={"password": ""},
+        files={"stego_file": ("cover.png", cover_image_bytes, "image/png")},
+    )
+    assert res_empty.status_code == 400
+    assert res_empty.json()["detail"] == "WRONG_PASSWORD_OR_NO_DATA"
+
+    # 2. Omitted password parameter (relies on Form default="")
+    res_omitted = client.post(
+        "/api/v1/stego/extract",
+        files={"stego_file": ("cover.png", cover_image_bytes, "image/png")},
+    )
+    assert res_omitted.status_code == 400
+    assert res_omitted.json()["detail"] == "WRONG_PASSWORD_OR_NO_DATA"
+

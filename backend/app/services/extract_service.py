@@ -35,7 +35,7 @@ class ExtractService:
         try:
             raw_img = Image.open(io.BytesIO(stego_bytes))
             stego_img = validate_cover_image(raw_img)
-        except (UnidentifiedImageError, ValueError) as err:
+        except (UnidentifiedImageError, ValueError, OSError) as err:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=WRONG_PASSWORD_OR_NO_DATA,

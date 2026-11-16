@@ -1,6 +1,7 @@
 """Service handling steganographic embedding, distortion metric calculation, and persistence."""
 
 import io
+import math
 from pathlib import Path
 
 from fastapi import HTTPException, status
@@ -79,7 +80,7 @@ class EmbedService:
         try:
             raw_img = Image.open(io.BytesIO(cover_bytes))
             cover_img = validate_cover_image(raw_img)
-        except (UnidentifiedImageError, ValueError) as err:
+        except (UnidentifiedImageError, ValueError, OSError) as err:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Invalid cover image: {err}",
@@ -127,6 +128,8 @@ class EmbedService:
         # 6. Record operation in database (NEVER store password or secret data)
         mse_val = float(metrics_data.get("mse", 0.0))
         psnr_val = float(metrics_data.get("psnr", 0.0))
+        if math.isinf(psnr_val) or math.isnan(psnr_val):
+            psnr_val = 100.0
         ssim_val = float(metrics_data.get("ssim", 0.0))
 
         op = OperationRepository.create(

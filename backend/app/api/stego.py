@@ -57,7 +57,7 @@ async def embed_steganography(
 @router.post("/extract", response_model=ExtractResponse)
 async def extract_steganography(
     stego_file: Annotated[UploadFile, File(...)],
-    password: Annotated[str, Form(...)],
+    password: Annotated[str, Form()] = "",
     session_id: str = Depends(get_session_id),
     db: Session = Depends(get_db),
 ) -> ExtractResponse:

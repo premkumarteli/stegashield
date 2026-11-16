@@ -2,6 +2,7 @@
 
 import io
 import json
+import math
 from pathlib import Path
 
 from fastapi import HTTPException, status
@@ -37,7 +38,7 @@ class AnalyzeService:
         try:
             c_raw = Image.open(io.BytesIO(cover_bytes))
             cover_img = validate_cover_image(c_raw)
-        except (UnidentifiedImageError, ValueError) as err:
+        except (UnidentifiedImageError, ValueError, OSError) as err:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Invalid cover image: {err}",
@@ -46,7 +47,7 @@ class AnalyzeService:
         try:
             s_raw = Image.open(io.BytesIO(stego_bytes))
             stego_img = validate_cover_image(s_raw)
-        except (UnidentifiedImageError, ValueError) as err:
+        except (UnidentifiedImageError, ValueError, OSError) as err:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Invalid stego image: {err}",
@@ -62,6 +63,8 @@ class AnalyzeService:
         metrics_dict = calculate_metrics(cover_img, stego_img)
         mse_val = float(metrics_dict["mse"])
         psnr_val = float(metrics_dict["psnr"])
+        if math.isinf(psnr_val) or math.isnan(psnr_val):
+            psnr_val = 100.0
         ssim_val = float(metrics_dict["ssim"])
 
         # 2. Difference heatmap
@@ -121,7 +124,7 @@ class AnalyzeService:
         try:
             raw_img = Image.open(io.BytesIO(image_bytes))
             img = validate_cover_image(raw_img)
-        except (UnidentifiedImageError, ValueError) as err:
+        except (UnidentifiedImageError, ValueError, OSError) as err:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Invalid candidate image: {err}",
