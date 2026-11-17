@@ -417,7 +417,7 @@ export default function AnalyzePage() {
                     </p>
                   </div>
                   <span className="text-xs font-mono text-frost-muted">
-                    Channel: <strong className="text-teal-liquid uppercase">{compareResult.pov_histogram.channel}</strong>
+                    Channel: <strong className="text-teal-liquid uppercase">{String(compareResult.pov_histogram.channel)}</strong>
                   </span>
                 </div>
 
@@ -577,12 +577,12 @@ export default function AnalyzePage() {
                     </div>
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${
-                        detectResult.chi_square.classification === "clean"
+                        String(detectResult.chi_square.classification) === "clean"
                           ? "bg-emerald-500/20 text-emerald-300"
                           : "bg-rose-500/20 text-rose-300"
                       }`}
                     >
-                      {detectResult.chi_square.classification}
+                      {String(detectResult.chi_square.classification)}
                     </span>
                   </div>
 
@@ -590,9 +590,9 @@ export default function AnalyzePage() {
                     <div className="p-3 rounded-xl bg-abyss-deep/60 border border-white/5">
                       <span className="text-[10px] text-frost-muted">p-value</span>
                       <p className="text-xl font-mono font-bold text-teal-liquid mt-0.5">
-                        {detectResult.chi_square.p_value < 0.0001
+                        {Number(detectResult.chi_square.p_value) < 0.0001
                           ? "< 0.0001"
-                          : detectResult.chi_square.p_value.toFixed(4)}
+                          : Number(detectResult.chi_square.p_value).toFixed(4)}
                       </p>
                       <span className="text-[9px] text-frost-muted/60">Threshold: p &lt; 0.05</span>
                     </div>
@@ -600,9 +600,9 @@ export default function AnalyzePage() {
                     <div className="p-3 rounded-xl bg-abyss-deep/60 border border-white/5">
                       <span className="text-[10px] text-frost-muted">Chi² Statistic</span>
                       <p className="text-xl font-mono font-bold text-frost mt-0.5">
-                        {formatNumber(detectResult.chi_square.chi2, 2)}
+                        {formatNumber(Number(detectResult.chi_square.chi2), 2)}
                       </p>
-                      <span className="text-[9px] text-frost-muted/60">df = {detectResult.chi_square.df}</span>
+                      <span className="text-[9px] text-frost-muted/60">df = {String(detectResult.chi_square.df)}</span>
                     </div>
                   </div>
 
@@ -620,12 +620,12 @@ export default function AnalyzePage() {
                     </div>
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${
-                        detectResult.rs_analysis.classification === "clean"
+                        String(detectResult.rs_analysis.classification) === "clean"
                           ? "bg-emerald-500/20 text-emerald-300"
                           : "bg-rose-500/20 text-rose-300"
                       }`}
                     >
-                      {detectResult.rs_analysis.classification}
+                      {String(detectResult.rs_analysis.classification)}
                     </span>
                   </div>
 
@@ -633,7 +633,7 @@ export default function AnalyzePage() {
                     <div className="p-3 rounded-xl bg-abyss-deep/60 border border-white/5">
                       <span className="text-[10px] text-frost-muted">Estimated Payload Ratio</span>
                       <p className="text-xl font-mono font-bold text-mint mt-0.5">
-                        {(detectResult.rs_analysis.estimated_payload_ratio * 100).toFixed(2)}%
+                        {(Number(detectResult.rs_analysis.estimated_payload_ratio) * 100).toFixed(2)}%
                       </p>
                       <span className="text-[9px] text-frost-muted/60">Alpha root</span>
                     </div>
@@ -641,10 +641,10 @@ export default function AnalyzePage() {
                     <div className="p-3 rounded-xl bg-abyss-deep/60 border border-white/5">
                       <span className="text-[10px] text-frost-muted">Regular / Singular</span>
                       <p className="text-xs font-mono font-bold text-frost mt-1.5">
-                        Rm: {detectResult.rs_analysis.regular_m.toFixed(3)}
+                        Rm: {Number(detectResult.rs_analysis.regular_m).toFixed(3)}
                       </p>
                       <p className="text-xs font-mono font-bold text-frost-muted">
-                        Sm: {detectResult.rs_analysis.singular_m.toFixed(3)}
+                        Sm: {Number(detectResult.rs_analysis.singular_m).toFixed(3)}
                       </p>
                     </div>
                   </div>
