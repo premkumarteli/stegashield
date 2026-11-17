@@ -92,7 +92,7 @@
 
 ---
 
-## 6. Top 10 Viva Questions & Model Answers
+## 6. Top 20 Viva Questions & Model Answers
 
 1. **Q: Why can't we use standard AES-CBC with a user password directly?**  
    *A:* Passwords have low entropy and can be easily dictionary-attacked without a slow, salted KDF like scrypt. Furthermore, CBC mode does not provide built-in ciphertext integrity authentication (which GCM provides via its GMAC tag).
@@ -123,3 +123,57 @@
 
 10. **Q: What are the primary limitations of non-adaptive spatial steganography?**  
     *A:* Non-adaptive methods modify pixels uniformly regardless of image content (flat skies vs textured trees). Modern steganalysis can easily detect uniform changes. Advanced steganography uses content-adaptive methods (such as S-UNIWARD or WOW) to hide data only in complex textures.
+
+11. **Q: What is the role of HKDF-SHA256 in StegaShield?**  
+    *A:* HKDF provides cryptographic key separation. It derives two mathematically independent 256-bit keys from the single scrypt master key: `enc_key` for AES-GCM and `perm_key` for PRNG permutation seeding, avoiding key reuse vulnerabilities.
+
+12. **Q: Why is PRNG permutation used instead of sequential embedding?**  
+    *A:* Sequential embedding clusters changes at the top-left corner of the image, creating a sharp localized statistical anomaly. PRNG permutation disperses modifications uniformly across the entire spatial domain.
+
+13. **Q: How does RS analysis distinguish between clean and stego images?**  
+    *A:* RS analysis groups pixels into blocks and measures variation under positive and negative flipping masks. In clean images, the counts of regular groups ($R_M$ and $R_{-M}$) are approximately equal. LSB replacement disturbs this symmetry in a predictable quadratic curve that allows estimating the embedded payload ratio.
+
+14. **Q: What is the difference between PSNR and SSIM?**  
+    *A:* PSNR computes pure pixel-by-pixel mean squared error (intensity difference) irrespective of spatial structure. SSIM (Structural Similarity) models human visual perception by measuring luminance, contrast, and structural degradation across local Gaussian windows.
+
+15. **Q: What happens if an adversary modifies a single pixel in a StegaShield stego image?**  
+    *A:* If the pixel modified falls within the embedded payload positions, the AES-256-GCM authentication tag verification will fail upon extraction, and the system safely rejects the payload with `WRONG_PASSWORD_OR_NO_DATA`.
+
+16. **Q: Why is the ciphertext length bound-checked before memory allocation?**  
+    *A:* To prevent memory exhaustion (DoS attacks). A crafted stego image could declare an enormous ciphertext length ($2^{32}-1$ bytes); checking it against the image's physical capacity before allocation prevents allocating gigabytes of RAM.
+
+17. **Q: How does StegaShield calibrate detector thresholds without hardcoding magic numbers?**  
+    *A:* StegaShield runs an empirical calibration script (`scripts/calibrate_thresholds.py`) on clean baseline images. The 95th percentile score is set as the `suspicious` threshold, and the 99th percentile is set as the `likely_stego` threshold, resulting in a predictable $\le 5\%$ false-positive rate.
+
+18. **Q: How are temporary files managed to prevent forensic exposure?**  
+    *A:* Files are saved with random UUID filenames and tracked in a `temp_files` table with an expiration timestamp. A background cleanup worker periodically deletes all files older than 30 minutes from the server disk.
+
+19. **Q: Why does StegaShield use AES-GCM Associated Authenticated Data (AAD)?**  
+    *A:* The 4-byte ciphertext length is passed as AAD to the AES-GCM cipher. This cryptographically binds the length to the ciphertext, ensuring that an adversary cannot truncate or splice the payload without triggering a tag mismatch.
+
+20. **Q: In an INS viva, how do you explain the Attack Lab experiment results?**  
+    *A:* At low payloads ($5\%-10\%$), both Chi-Square and RS detectors show low detection rates because few samples are altered. At higher payloads ($\ge 50\%$), Chi-Square and RS detection rates on LSB replacement spike towards $100\%$, while LSB matching maintains a near-zero Chi-Square score, empirically proving the statistical superiority of $\pm 1$ embedding over bit replacement.
+
+---
+
+## 7. Module-by-Module Code Walkthrough for Viva
+
+- **`backend/app/core/crypto.py`**:
+  - `derive_keys(password, salt)`: Runs `hashlib.scrypt` with $N=131072, r=8, p=1$, then passes the result through two HKDF expansions.
+  - `encrypt_payload(data, enc_key, is_file, filename)`: Formats container bytes `[type | fn_len | filename | data]`, binds `ct_len` into AAD, and runs `AESGCM(enc_key).encrypt`.
+  - `decrypt_payload(...)`: Verifies tag, extracts fields, and raises uniform `StegaShieldError`.
+
+- **`backend/app/core/stego.py`**:
+  - `calculate_capacity(image)`: Calculates $3 \times W \times H - 400$ bits of usable space.
+  - `embed(...)`: Embeds 128-bit salt sequentially into RGB channel samples $0..127$, seeds NumPy PRNG with `perm_key` to shuffle remaining slots, and applies LSB replacement (`& 0xFE | bit`) or LSB matching ($\pm 1$).
+  - `extract(...)`: Reads salt from slots $0..127$, regenerates permutation, reads header, and decrypts.
+
+- **`backend/app/core/detect.py`**:
+  - `chi_square_attack(image)`: Pools 128 PoVs, filters bins where expected count $< 4$, calculates $\chi^2$ statistic, and computes SciPy survival function p-value.
+  - `rs_analysis(image)`: Fully vectorized calculation of regular/singular groups under masks $[0,1,1,0]$ and $[0,-1,-1,0]$, solving the quadratic equation to estimate embedded ratio $\hat{p}$.
+
+- **`backend/app/core/metrics.py`**:
+  - `calculate_metrics(cover, stego)`: Computes MSE, PSNR, and vectorized 3D SSIM using SciPy's `gaussian_filter` across spatial axes without color distortion.
+  - `generate_diff_heatmap(...)`: Amplifies pixel differences by 255 for visual inspection.
+  - `generate_bitplane(...)`: Isolates LSB plane `(arr & 1) * 255`.
+
