@@ -67,9 +67,9 @@ StegaShield is an academic-grade steganography and steganalysis experimentation 
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
 | M1 | Core Stego, Crypto & Metrics | `crypto.py`, `stego.py`, `metrics.py`, unit tests | None | DONE |
-| M2 | Steganalysis Detectors & Attack Lab Engine | `detect.py`, `attack_lab.py`, calibration script, unit tests | M1 | IN_PROGRESS |
-| M3 | Backend API, Database & Services | FastAPI app, config, DB models, Alembic, services, API routers, API tests | M2 | PLANNED |
-| M4 | Next.js Frontend & UI Integration | Next.js 15 App Router, Tailwind, shadcn, all 7 routes, typed client | M3 | PLANNED |
+| M2 | Steganalysis Detectors & Attack Lab Engine | `detect.py`, `attack_lab.py`, calibration script, unit tests | M1 | DONE |
+| M3 | Backend API, Database & Services | FastAPI app, config, DB models, Alembic, services, API routers, API tests | M2 | DONE |
+| M4 | Next.js Frontend & UI Integration | Next.js 15 App Router, Tailwind, shadcn, all 7 routes, typed client | M3 | IN_PROGRESS |
 | M5 | Documentation, Full Verification & Push | Architecture docs, Threat Model, Viva Notes, scripts, git commit & push | M4 | PLANNED |
 
 ## Interface Contracts

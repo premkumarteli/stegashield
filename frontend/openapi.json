@@ -1,0 +1,969 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "StegaShield API",
+    "description": "Academic-grade steganography, distortion analysis, and steganalysis experimentation laboratory API.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Check Health",
+        "description": "Check API operational health and database connectivity.",
+        "operationId": "check_health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/stego/embed": {
+      "post": {
+        "tags": [
+          "Steganography"
+        ],
+        "summary": "Embed Steganography",
+        "description": "Embed payload (text or file) into cover image using authenticated encryption & LSB embedding.",
+        "operationId": "embed_steganography_api_v1_stego_embed_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_embed_steganography_api_v1_stego_embed_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmbedResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/stego/extract": {
+      "post": {
+        "tags": [
+          "Steganography"
+        ],
+        "summary": "Extract Steganography",
+        "description": "Extract and decrypt payload from stego image with uniform error suppression.",
+        "operationId": "extract_steganography_api_v1_stego_extract_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_extract_steganography_api_v1_stego_extract_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtractResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/stego/analyze": {
+      "post": {
+        "tags": [
+          "Steganography"
+        ],
+        "summary": "Analyze Comparison",
+        "description": "Compare cover and stego images, generating MSE, PSNR, SSIM, heatmap, bitplane, and PoV histogram.",
+        "operationId": "analyze_comparison_api_v1_stego_analyze_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_analyze_comparison_api_v1_stego_analyze_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyzeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/stego/detect": {
+      "post": {
+        "tags": [
+          "Steganography"
+        ],
+        "summary": "Detect Stego",
+        "description": "Run Chi-Square attack and RS Analysis statistical steganalysis on candidate image.",
+        "operationId": "detect_stego_api_v1_stego_detect_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_detect_stego_api_v1_stego_detect_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetectResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/attack-lab/run": {
+      "post": {
+        "tags": [
+          "Attack Lab"
+        ],
+        "summary": "Start Attack Lab Experiment",
+        "description": "Initiate Attack Lab matrix sweep across embedding methods, ratios, and detectors.\n\nEnforces mutex locking: returns HTTP 409 Conflict if another experiment is currently running.",
+        "operationId": "start_attack_lab_experiment_api_v1_attack_lab_run_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentStartResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/attack-lab/progress/{experiment_id}": {
+      "get": {
+        "tags": [
+          "Attack Lab"
+        ],
+        "summary": "Get Experiment Progress",
+        "description": "SSE event-stream delivering real-time experiment progress updates.",
+        "operationId": "get_experiment_progress_api_v1_attack_lab_progress__experiment_id__get",
+        "parameters": [
+          {
+            "name": "experiment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Experiment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/attack-lab/export/{experiment_id}": {
+      "get": {
+        "tags": [
+          "Attack Lab"
+        ],
+        "summary": "Export Experiment Csv",
+        "description": "Download RFC 4180 compliant CSV benchmark report for completed experiment.",
+        "operationId": "export_experiment_csv_api_v1_attack_lab_export__experiment_id__get",
+        "parameters": [
+          {
+            "name": "experiment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Experiment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/history": {
+      "get": {
+        "tags": [
+          "History"
+        ],
+        "summary": "Get Session History",
+        "description": "Retrieve audit history of operations associated with the anonymous caller session.",
+        "operationId": "get_session_history_api_v1_history_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "History"
+        ],
+        "summary": "Clear Session History",
+        "description": "Clear all operation history records scoped to the current anonymous caller session.",
+        "operationId": "clear_session_history_api_v1_history_delete",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryClearResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/files/{file_id}": {
+      "get": {
+        "tags": [
+          "Files"
+        ],
+        "summary": "Download Temp File",
+        "description": "Download temporary artifact with 30-minute expiration check.",
+        "operationId": "download_temp_file_api_v1_files__file_id__get",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "Root"
+        ],
+        "summary": "Root Info",
+        "description": "Root metadata endpoint.",
+        "operationId": "root_info__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Root Info  Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AnalyzeResponse": {
+        "properties": {
+          "operation_id": {
+            "type": "string",
+            "title": "Operation Id"
+          },
+          "mse": {
+            "type": "number",
+            "title": "Mse"
+          },
+          "psnr": {
+            "type": "number",
+            "title": "Psnr"
+          },
+          "ssim": {
+            "type": "number",
+            "title": "Ssim"
+          },
+          "heatmap_url": {
+            "type": "string",
+            "title": "Heatmap Url"
+          },
+          "bitplane_url": {
+            "type": "string",
+            "title": "Bitplane Url"
+          },
+          "pov_histogram": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Pov Histogram"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operation_id",
+          "mse",
+          "psnr",
+          "ssim",
+          "heatmap_url",
+          "bitplane_url",
+          "pov_histogram"
+        ],
+        "title": "AnalyzeResponse"
+      },
+      "Body_analyze_comparison_api_v1_stego_analyze_post": {
+        "properties": {
+          "cover_file": {
+            "type": "string",
+            "format": "binary",
+            "title": "Cover File"
+          },
+          "stego_file": {
+            "type": "string",
+            "format": "binary",
+            "title": "Stego File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cover_file",
+          "stego_file"
+        ],
+        "title": "Body_analyze_comparison_api_v1_stego_analyze_post"
+      },
+      "Body_detect_stego_api_v1_stego_detect_post": {
+        "properties": {
+          "image_file": {
+            "type": "string",
+            "format": "binary",
+            "title": "Image File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "image_file"
+        ],
+        "title": "Body_detect_stego_api_v1_stego_detect_post"
+      },
+      "Body_embed_steganography_api_v1_stego_embed_post": {
+        "properties": {
+          "cover_file": {
+            "type": "string",
+            "format": "binary",
+            "title": "Cover File"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          },
+          "payload_type": {
+            "type": "string",
+            "title": "Payload Type",
+            "default": "text"
+          },
+          "payload_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payload Text"
+          },
+          "payload_file": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "binary"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payload File"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method",
+            "default": "lsb_replacement"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cover_file",
+          "password"
+        ],
+        "title": "Body_embed_steganography_api_v1_stego_embed_post"
+      },
+      "Body_extract_steganography_api_v1_stego_extract_post": {
+        "properties": {
+          "stego_file": {
+            "type": "string",
+            "format": "binary",
+            "title": "Stego File"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "stego_file"
+        ],
+        "title": "Body_extract_steganography_api_v1_stego_extract_post"
+      },
+      "DetectResponse": {
+        "properties": {
+          "operation_id": {
+            "type": "string",
+            "title": "Operation Id"
+          },
+          "chi_square": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Chi Square"
+          },
+          "rs_analysis": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Rs Analysis"
+          },
+          "classification": {
+            "type": "string",
+            "title": "Classification"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operation_id",
+          "chi_square",
+          "rs_analysis",
+          "classification"
+        ],
+        "title": "DetectResponse"
+      },
+      "DistortionMetrics": {
+        "properties": {
+          "mse": {
+            "type": "number",
+            "title": "Mse"
+          },
+          "psnr": {
+            "type": "number",
+            "title": "Psnr"
+          },
+          "ssim": {
+            "type": "number",
+            "title": "Ssim"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mse",
+          "psnr",
+          "ssim"
+        ],
+        "title": "DistortionMetrics"
+      },
+      "EmbedResponse": {
+        "properties": {
+          "operation_id": {
+            "type": "string",
+            "title": "Operation Id"
+          },
+          "download_url": {
+            "type": "string",
+            "title": "Download Url"
+          },
+          "filename": {
+            "type": "string",
+            "title": "Filename"
+          },
+          "metrics": {
+            "$ref": "#/components/schemas/DistortionMetrics"
+          },
+          "capacity_stats": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Capacity Stats"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operation_id",
+          "download_url",
+          "filename",
+          "metrics"
+        ],
+        "title": "EmbedResponse"
+      },
+      "ExperimentStartResponse": {
+        "properties": {
+          "experiment_id": {
+            "type": "string",
+            "title": "Experiment Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "experiment_id",
+          "status",
+          "message"
+        ],
+        "title": "ExperimentStartResponse"
+      },
+      "ExtractResponse": {
+        "properties": {
+          "operation_id": {
+            "type": "string",
+            "title": "Operation Id"
+          },
+          "payload_type": {
+            "type": "string",
+            "title": "Payload Type"
+          },
+          "payload_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payload Text"
+          },
+          "filename": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filename"
+          },
+          "download_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Download Url"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "title": "Size Bytes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operation_id",
+          "payload_type",
+          "size_bytes"
+        ],
+        "title": "ExtractResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "database": {
+            "type": "string",
+            "title": "Database"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "version",
+          "database"
+        ],
+        "title": "HealthResponse"
+      },
+      "HistoryClearResponse": {
+        "properties": {
+          "cleared": {
+            "type": "boolean",
+            "title": "Cleared"
+          },
+          "deleted_count": {
+            "type": "integer",
+            "title": "Deleted Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cleared",
+          "deleted_count"
+        ],
+        "title": "HistoryClearResponse"
+      },
+      "HistoryResponse": {
+        "properties": {
+          "operations": {
+            "items": {
+              "$ref": "#/components/schemas/OperationItemResponse"
+            },
+            "type": "array",
+            "title": "Operations"
+          }
+        },
+        "type": "object",
+        "required": [
+          "operations"
+        ],
+        "title": "HistoryResponse"
+      },
+      "OperationItemResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "operation_type": {
+            "type": "string",
+            "title": "Operation Type"
+          },
+          "cover_filename": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Filename"
+          },
+          "stego_filename": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stego Filename"
+          },
+          "payload_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payload Type"
+          },
+          "method": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Method"
+          },
+          "mse": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mse"
+          },
+          "psnr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Psnr"
+          },
+          "ssim": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ssim"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "operation_type",
+          "created_at"
+        ],
+        "title": "OperationItemResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
