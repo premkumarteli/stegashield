@@ -41,24 +41,86 @@ DOT_NEXT_DIR = FRONTEND_DIR / ".next"
 def is_port_in_use(port: int, host: str = "127.0.0.1") -> bool:
     """Checks whether a local TCP port is already bound."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.settimeout(0.5)
+        s.settimeout(0.3)
         return s.connect_ex((host, port)) == 0
 
 
-def kill_occupying_processes(ports: list[int]) -> None:
-    """Terminates processes listening on specified ports to prevent EADDRINUSE conflicts."""
-    if sys.platform != "win32":
-        return
-    for port in ports:
+def find_pids_on_port(port: int) -> set[int]:
+    """Finds all process IDs bound to or listening on a given port."""
+    pids: set[int] = set()
+    my_pid = os.getpid()
+
+    if sys.platform == "win32":
+        # Strategy 1: netstat -ano
         try:
-            cmd = f"Get-NetTCPConnection -LocalPort {port} -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess"
-            res = subprocess.run(["powershell", "-NoProfile", "-Command", cmd], capture_output=True, text=True, check=False)
-            pids = set(filter(None, [line.strip() for line in res.stdout.splitlines()]))
-            for pid in pids:
-                if pid and int(pid) > 4:
-                    subprocess.run(["taskkill", "/F", "/PID", pid], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
+            res = subprocess.run(
+                f"netstat -ano | findstr :{port}",
+                shell=True,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            for line in res.stdout.splitlines():
+                parts = line.strip().split()
+                if len(parts) >= 5 and parts[1].endswith(f":{port}"):
+                    try:
+                        pid = int(parts[-1])
+                        if pid > 4 and pid != my_pid:
+                            pids.add(pid)
+                    except ValueError:
+                        pass
         except Exception:
             pass
+
+        # Strategy 2: PowerShell Get-NetTCPConnection
+        try:
+            cmd = f"Get-NetTCPConnection -LocalPort {port} -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess"
+            res = subprocess.run(
+                ["powershell", "-NoProfile", "-Command", cmd],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            for line in res.stdout.splitlines():
+                pid_str = line.strip()
+                if pid_str.isdigit():
+                    pid = int(pid_str)
+                    if pid > 4 and pid != my_pid:
+                        pids.add(pid)
+        except Exception:
+            pass
+
+    return pids
+
+
+def kill_occupying_processes(ports: list[int], max_wait: float = 3.0) -> None:
+    """Terminates processes listening on specified ports (including child trees) and waits until free."""
+    for port in ports:
+        if not is_port_in_use(port):
+            continue
+
+        pids = find_pids_on_port(port)
+        for pid in pids:
+            if sys.platform == "win32":
+                # Use /F (force) and /T (tree kill all child workers like WatchFiles/multiprocessing)
+                subprocess.run(
+                    ["taskkill", "/F", "/T", "/PID", str(pid)],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    check=False,
+                )
+            else:
+                try:
+                    os.kill(pid, signal.SIGKILL)
+                except OSError:
+                    pass
+
+        # Wait until port is actually unbound by OS
+        start = time.time()
+        while time.time() - start < max_wait:
+            if not is_port_in_use(port):
+                break
+            time.sleep(0.2)
 
 
 def stream_output(process: subprocess.Popen, prefix: str, color_code: str) -> None:
@@ -182,7 +244,9 @@ def main() -> None:
     if is_port_in_use(args.backend_port) or is_port_in_use(args.frontend_port):
         print("\033[33mCleaning dangling processes from previous runs...\033[0m")
         kill_occupying_processes([args.backend_port, args.frontend_port])
-        time.sleep(1.0)
+        if is_port_in_use(args.backend_port) or is_port_in_use(args.frontend_port):
+            time.sleep(1.0)
+            kill_occupying_processes([args.backend_port, args.frontend_port])
 
     # 2. Database Migrations
     run_database_migrations()
@@ -284,6 +348,8 @@ def main() -> None:
     finally:
         for p in processes:
             kill_process_tree(p)
+        # Ensure no lingering background sockets or spawned subprocesses remain
+        kill_occupying_processes([args.backend_port, args.frontend_port])
         print("\033[32m✔ All StegaShield processes cleanly stopped.\033[0m\n")
 
 
