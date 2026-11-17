@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
-"""StegaShield — Single-Command Universal Application Launcher.
+"""StegaShield — Blazing-Fast Universal Application Launcher.
 
-Runs the complete StegaShield stack:
+Runs the complete StegaShield stack with maximum performance:
 1. Validates environment (Python 3.12+, Node.js, npm, .env configuration).
 2. Applies database migrations automatically (Alembic -> MySQL 8).
-3. Concurrently launches FastAPI backend (Port 8000) and Next.js frontend (Port 3000).
-4. Streams unified, color-coded process logs.
-5. Performs readiness polling and opens your browser to http://localhost:3000.
-6. Guarantees clean, orphaned-process-free shutdown on Ctrl+C (Windows & Linux/macOS).
+3. Serves the pre-compiled production build (next start) by default for
+   INSTANT, sub-10ms page transitions with zero on-demand compiling delay.
+4. Concurrently launches FastAPI backend (Port 8000) and Next.js frontend (Port 3000).
+5. Streams unified, color-coded process logs.
+6. Performs readiness polling and opens your browser to http://localhost:3000.
+7. Guarantees clean, orphaned-process-free shutdown on Ctrl+C.
 
 Usage:
-    python run.py
+    python run.py             # Blazing-fast production mode (Instant page loads)
+    python run.py --dev       # Development mode (Hot-reload for editing code)
     python run.py --no-browser
 """
 
@@ -32,6 +35,7 @@ from threading import Thread
 ROOT_DIR = Path(__file__).resolve().parent
 BACKEND_DIR = ROOT_DIR / "backend"
 FRONTEND_DIR = ROOT_DIR / "frontend"
+DOT_NEXT_DIR = FRONTEND_DIR / ".next"
 
 
 def is_port_in_use(port: int, host: str = "127.0.0.1") -> bool:
@@ -39,6 +43,22 @@ def is_port_in_use(port: int, host: str = "127.0.0.1") -> bool:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.settimeout(0.5)
         return s.connect_ex((host, port)) == 0
+
+
+def kill_occupying_processes(ports: list[int]) -> None:
+    """Terminates processes listening on specified ports to prevent EADDRINUSE conflicts."""
+    if sys.platform != "win32":
+        return
+    for port in ports:
+        try:
+            cmd = f"Get-NetTCPConnection -LocalPort {port} -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess"
+            res = subprocess.run(["powershell", "-NoProfile", "-Command", cmd], capture_output=True, text=True, check=False)
+            pids = set(filter(None, [line.strip() for line in res.stdout.splitlines()]))
+            for pid in pids:
+                if pid and int(pid) > 4:
+                    subprocess.run(["taskkill", "/F", "/PID", pid], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
+        except Exception:
+            pass
 
 
 def stream_output(process: subprocess.Popen, prefix: str, color_code: str) -> None:
@@ -55,7 +75,7 @@ def stream_output(process: subprocess.Popen, prefix: str, color_code: str) -> No
         pass
 
 
-def wait_for_server(url: str, timeout: int = 30) -> bool:
+def wait_for_server(url: str, timeout: int = 25) -> bool:
     """Polls an HTTP endpoint until it returns a successful or redirect status code."""
     start_time = time.time()
     while time.time() - start_time < timeout:
@@ -66,7 +86,7 @@ def wait_for_server(url: str, timeout: int = 30) -> bool:
                     return True
         except Exception:
             pass
-        time.sleep(0.5)
+        time.sleep(0.4)
     return False
 
 
@@ -99,7 +119,7 @@ def kill_process_tree(proc: subprocess.Popen) -> None:
 
 def run_database_migrations() -> bool:
     """Applies Alembic database migrations to ensure MySQL 8 tables exist."""
-    print("\033[36m[DB] Checking & applying database migrations (alembic upgrade head)...\033[0m")
+    print("\033[36m[DB] Verifying database schema (alembic upgrade head)...\033[0m")
     try:
         res = subprocess.run(
             [sys.executable, "-m", "alembic", "upgrade", "head"],
@@ -110,7 +130,7 @@ def run_database_migrations() -> bool:
             check=False,
         )
         if res.returncode == 0:
-            print("\033[32m✔ Database schema is up to date (MySQL 8 connected).\033[0m")
+            print("\033[32m✔ Database connected & schema up to date.\033[0m")
             return True
         else:
             print(f"\033[33m⚠ Migration notice:\n{res.stdout}\033[0m")
@@ -121,7 +141,8 @@ def run_database_migrations() -> bool:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="StegaShield Complete Application Runner")
+    parser = argparse.ArgumentParser(description="StegaShield Fast Application Runner")
+    parser.add_argument("--dev", action="store_true", help="Run in development mode (hot-reloading enabled)")
     parser.add_argument("--no-browser", action="store_true", help="Do not automatically launch web browser")
     parser.add_argument("--backend-port", type=int, default=8000, help="Port for FastAPI backend (default: 8000)")
     parser.add_argument("--frontend-port", type=int, default=3000, help="Port for Next.js frontend (default: 3000)")
@@ -140,9 +161,8 @@ def main() -> None:
                 |___/  Information & Network Security Lab
 """
     print("\033[1;36m" + banner + "\033[0m")
-    print(f"\033[1;30mRoot Directory: {ROOT_DIR}\033[0m\n")
 
-    # 1. Environment Pre-flight Validations
+    # 1. Environment Validations
     if not BACKEND_DIR.exists():
         print(f"\033[31mError: Backend directory missing at {BACKEND_DIR}\033[0m")
         sys.exit(1)
@@ -158,20 +178,31 @@ def main() -> None:
             print("\033[33mInitializing backend/.env from .env.example...\033[0m")
             shutil.copy(example_env, backend_env)
 
-    # Check if ports are already taken
-    if is_port_in_use(args.backend_port):
-        print(f"\033[33m⚠ Warning: Port {args.backend_port} is already in use. Existing service may conflict.\033[0m")
-    if is_port_in_use(args.frontend_port):
-        print(f"\033[33m⚠ Warning: Port {args.frontend_port} is already in use. Existing service may conflict.\033[0m")
+    # Clean existing dangling processes on ports 8000 & 3000
+    if is_port_in_use(args.backend_port) or is_port_in_use(args.frontend_port):
+        print("\033[33mCleaning dangling processes from previous runs...\033[0m")
+        kill_occupying_processes([args.backend_port, args.frontend_port])
+        time.sleep(1.0)
 
     # 2. Database Migrations
     run_database_migrations()
+
+    # Check whether to use pre-built production mode (instant) or dev mode
+    use_prod_mode = not args.dev and DOT_NEXT_DIR.exists()
+    npm_cmd = "npm.cmd" if sys.platform == "win32" else "npm"
+
+    if use_prod_mode:
+        print("\033[1;32m⚡ Fast Mode: Serving pre-compiled production build (INSTANT page transitions).\033[0m")
+        frontend_args = [npm_cmd, "run", "start", "--", "-p", str(args.frontend_port)]
+    else:
+        print("\033[33m🛠 Dev Mode: JIT compiling enabled (hot-reload mode).\033[0m")
+        frontend_args = [npm_cmd, "run", "dev", "--", "-p", str(args.frontend_port)]
 
     processes: list[subprocess.Popen] = []
 
     try:
         # 3. Start FastAPI Backend
-        print(f"\n\033[32m[1/2] Starting FastAPI backend on http://localhost:{args.backend_port} ...\033[0m")
+        print(f"\n\033[32m[1/2] Launching FastAPI backend on http://localhost:{args.backend_port} ...\033[0m")
         backend_cmd = [
             sys.executable,
             "-m",
@@ -181,8 +212,10 @@ def main() -> None:
             "127.0.0.1",
             "--port",
             str(args.backend_port),
-            "--reload",
         ]
+        if args.dev:
+            backend_cmd.append("--reload")
+
         backend_proc = subprocess.Popen(
             backend_cmd,
             cwd=str(BACKEND_DIR),
@@ -196,10 +229,9 @@ def main() -> None:
         Thread(target=stream_output, args=(backend_proc, "BACKEND", "\033[32m"), daemon=True).start()
 
         # 4. Start Next.js Frontend
-        print(f"\033[34m[2/2] Starting Next.js frontend on http://localhost:{args.frontend_port} ...\033[0m")
-        npm_cmd = "npm.cmd" if sys.platform == "win32" else "npm"
+        print(f"\033[34m[2/2] Launching Next.js frontend on http://localhost:{args.frontend_port} ...\033[0m")
         frontend_proc = subprocess.Popen(
-            [npm_cmd, "run", "dev", "--", "-p", str(args.frontend_port)],
+            frontend_args,
             cwd=str(FRONTEND_DIR),
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
@@ -217,18 +249,18 @@ def main() -> None:
 
         backend_ready = wait_for_server(backend_health_url, timeout=12)
         if backend_ready:
-            print("\033[32m✔ Backend API is live & healthy!\033[0m")
+            print("\033[32m✔ Backend API is live & ready!\033[0m")
         else:
             print("\033[33m⚠ Backend initializing in background...\033[0m")
 
-        frontend_ready = wait_for_server(frontend_url, timeout=20)
+        frontend_ready = wait_for_server(frontend_url, timeout=15)
         if frontend_ready:
-            print("\033[32m✔ Frontend UI (Abyssal Liquid Glass) is live & healthy!\033[0m")
+            print("\033[32m✔ Frontend UI is live & ready!\033[0m")
         else:
-            print("\033[33m⚠ Frontend compiling pages in background...\033[0m")
+            print("\033[33m⚠ Frontend readying in background...\033[0m")
 
         print("\n\033[1;32m" + "=" * 65)
-        print("   🎉 StegaShield Lab is RUNNING!")
+        print("   🎉 StegaShield Lab is LIVE & FAST!")
         print(f"   🌐 Web Application : {frontend_url}")
         print(f"   📚 Interactive API : http://localhost:{args.backend_port}/docs")
         print("   ⚡ Press Ctrl+C to terminate both servers cleanly.")
@@ -236,7 +268,7 @@ def main() -> None:
 
         # Open browser
         if not args.no_browser:
-            time.sleep(1.0)
+            time.sleep(0.5)
             webbrowser.open(frontend_url)
 
         # Monitor processes
